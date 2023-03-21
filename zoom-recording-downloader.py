@@ -32,7 +32,7 @@ APP_VERSION = "2.1"
 # JWT_TOKEN now lives in appenv.py
 ACCESS_TOKEN = 'Bearer ' + JWT_TOKEN
 AUTHORIZATION_HEADER = {'Authorization': ACCESS_TOKEN}
-ACCESS_PARAMS = {'status': 'active'}
+ACCESS_PARAMS = {'status': 'active'} # active or inactive
 
 API_ENDPOINT_USER_LIST = 'https://api.zoom.us/v2/users'
 
