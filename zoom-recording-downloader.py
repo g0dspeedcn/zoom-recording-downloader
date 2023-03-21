@@ -32,6 +32,7 @@ APP_VERSION = "2.1"
 # JWT_TOKEN now lives in appenv.py
 ACCESS_TOKEN = 'Bearer ' + JWT_TOKEN
 AUTHORIZATION_HEADER = {'Authorization': ACCESS_TOKEN}
+ACCESS_PARAMS = {'status': 'active'}
 
 API_ENDPOINT_USER_LIST = 'https://api.zoom.us/v2/users'
 
@@ -76,13 +77,17 @@ def get_credentials(host_id, page_number, rec_start_date):
 def get_user_ids():
     # get total page count, convert to integer, increment by 1
     response = requests.get(url=API_ENDPOINT_USER_LIST,
-                            headers=AUTHORIZATION_HEADER)
+                            headers=AUTHORIZATION_HEADER,
+                            params=ACCESS_PARAMS)
     if not response.ok:
         print(response)
         print('Is your JWT still valid?')
         exit(1)
     page_data = response.json()
     total_pages = int(page_data['page_count']) + 1
+    
+    total_records = int(page_data['total_records'])
+    print("==> Total accounts number: {}".format(total_records))
 
     # results will be appended to this list
     all_entries = []
@@ -90,7 +95,7 @@ def get_user_ids():
     # loop through all pages and return user data
     for page in range(1, total_pages):
         url = API_ENDPOINT_USER_LIST + "?page_number=" + str(page)
-        user_data = requests.get(url=url, headers=AUTHORIZATION_HEADER).json()
+        user_data = requests.get(url=url, headers=AUTHORIZATION_HEADER, params=ACCESS_PARAMS).json()
         user_ids = [(user['email'], user['id'], user['first_name'],
                      user['last_name']) for user in user_data['users']]
         all_entries.extend(user_ids)
